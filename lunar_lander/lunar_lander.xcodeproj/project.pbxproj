@@ -15,8 +15,8 @@
 		447995552AF85DB30057B641 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 447995522AF85DB30057B641 /* SDL2.framework */; };
 		447995562AF85DB30057B641 /* SDL2_mixer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 447995532AF85DB30057B641 /* SDL2_mixer.framework */; };
 		447995572AF85DB30057B641 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 447995542AF85DB30057B641 /* SDL2_image.framework */; };
-		4479955A2AF85DEE0057B641 /* assets in CopyFiles */ = {isa = PBXBuildFile; fileRef = 447995582AF85DEE0057B641 /* assets */; };
 		4479955B2AF85DEE0057B641 /* shaders in CopyFiles */ = {isa = PBXBuildFile; fileRef = 447995592AF85DEE0057B641 /* shaders */; };
+		44AEB2452AFC7D8400D92D5D /* assets in CopyFiles */ = {isa = PBXBuildFile; fileRef = 44AEB2442AFC76DD00D92D5D /* assets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,7 +26,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
-				4479955A2AF85DEE0057B641 /* assets in CopyFiles */,
+				44AEB2452AFC7D8400D92D5D /* assets in CopyFiles */,
 				4479955B2AF85DEE0057B641 /* shaders in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -37,7 +37,6 @@
 		447995332AF85C280057B641 /* lunar_lander */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = lunar_lander; sourceTree = BUILT_PRODUCTS_DIR; };
 		447995362AF85C280057B641 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		447995432AF85CF80057B641 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
-		447995442AF85CF80057B641 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 		447995452AF85CF80057B641 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; path = shaders; sourceTree = "<group>"; };
 		447995462AF85CF80057B641 /* stb_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		447995472AF85CF80057B641 /* ShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderProgram.cpp; sourceTree = "<group>"; };
@@ -49,8 +48,8 @@
 		447995522AF85DB30057B641 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		447995532AF85DB30057B641 /* SDL2_mixer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_mixer.framework; path = ../../../../../../../../Library/Frameworks/SDL2_mixer.framework; sourceTree = "<group>"; };
 		447995542AF85DB30057B641 /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
-		447995582AF85DEE0057B641 /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = lunar_lander/assets; sourceTree = "<group>"; };
 		447995592AF85DEE0057B641 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; name = shaders; path = lunar_lander/shaders; sourceTree = "<group>"; };
+		44AEB2442AFC76DD00D92D5D /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = assets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,7 +71,6 @@
 		4479952A2AF85C280057B641 = {
 			isa = PBXGroup;
 			children = (
-				447995582AF85DEE0057B641 /* assets */,
 				447995592AF85DEE0057B641 /* shaders */,
 				447995352AF85C280057B641 /* lunar_lander */,
 				447995342AF85C280057B641 /* Products */,
@@ -91,7 +89,7 @@
 		447995352AF85C280057B641 /* lunar_lander */ = {
 			isa = PBXGroup;
 			children = (
-				447995442AF85CF80057B641 /* assets */,
+				44AEB2442AFC76DD00D92D5D /* assets */,
 				447995492AF85CF80057B641 /* Entity.cpp */,
 				447995432AF85CF80057B641 /* Entity.h */,
 				4479954A2AF85CF80057B641 /* glm */,

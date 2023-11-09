@@ -1,11 +1,22 @@
+/**
+* Author: [Wesley]
+* Assignment: Lunar Lander
+* Date due: 2023-11-08, 11:59pm
+* I pledge that I have completed this assignment without
+* collaborating with anyone else, in conformance with the
+* NYU School of Engineering Policies and Procedures on
+* Academic Misconduct.
+**/
+
+
 #define LOG(argument) std::cout << argument << '\n'
 #define STB_IMAGE_IMPLEMENTATION
 #define GL_SILENCE_DEPRECATION
 #define GL_GLEXT_PROTOTYPES 1
-#define NUMBER_OF_ENEMIES 3
+#define NUMBER_OF_ENEMIES 2
 #define FIXED_TIMESTEP 0.0166666f
-#define ACC_OF_GRAVITY -9.81f
-#define PLATFORM_COUNT 3
+#define ACC_OF_GRAVITY -1.81f
+#define PLATFORM_COUNT 9
 
 #ifdef _WINDOWS
 #include <GL/glew.h>
@@ -21,12 +32,16 @@
 #include <ctime>
 #include <vector>
 #include "Entity.h"
+#include <ostream>
 
 // ————— STRUCTS AND ENUMS —————//
 struct GameState
 {
     Entity* player;
     Entity* platforms;
+    Entity* goal;
+    Entity* win_msg;
+    Entity* lose_msg;
 };
 
 // ————— CONSTANTS ————— //
@@ -48,7 +63,10 @@ const char V_SHADER_PATH[] = "shaders/vertex_textured.glsl",
 
 const float MILLISECONDS_IN_SECOND  = 1000.0;
 const char  SPRITESHEET_FILEPATH[]  = "assets/george_0.png",
-            PLATFORM_FILEPATH[]     = "assets/platformPack_tile027.png";
+            PLATFORM_FILEPATH[]     = "assets/platformPack_tile027.png",
+            OTHER_FILEPATH[]        = "assets/grass_block.png",
+            WIN_FILEPATH[]          = "assets/accomplished.jpeg",
+            LOSE_FILEPATH[]         = "assets/failed.jpeg";
 
 const int NUMBER_OF_TEXTURES = 1;  // to be generated, that is
 const GLint LEVEL_OF_DETAIL  = 0;  // base image level; Level n is the nth mipmap reduction image
@@ -59,6 +77,10 @@ GameState g_game_state;
 
 SDL_Window* g_display_window;
 bool g_game_is_running = true;
+
+bool win = false;
+bool lose = false;
+bool start = false;
 
 ShaderProgram g_shader_program;
 glm::mat4 g_view_matrix, g_projection_matrix;
@@ -74,6 +96,7 @@ GLuint load_texture(const char* filepath)
 
     if (image == NULL)
     {
+        std::cout << filepath;
         LOG("Unable to load image. Make sure the path is correct.");
         assert(false);
     }
@@ -126,7 +149,7 @@ void initialise()
     // ————— PLAYER ————— //
     // Existing
     g_game_state.player = new Entity();
-    g_game_state.player->set_position(glm::vec3(0.0f));
+    g_game_state.player->set_position(glm::vec3(0.0f,5.0f,0.0f));
     g_game_state.player->set_movement(glm::vec3(0.0f));
     g_game_state.player->set_acceleration(glm::vec3(0.0f, ACC_OF_GRAVITY * 0.1, 0.0f));
     g_game_state.player->set_speed(1.0f);
@@ -146,20 +169,51 @@ void initialise()
     g_game_state.player->m_animation_rows    = 4;
     g_game_state.player->set_height(0.9f);
     g_game_state.player->set_width(0.9f);
+    g_game_state.player->set_entity_type(PLAYER);
 
-    // Jumping
-    g_game_state.player->m_jumping_power = 3.0f;
+    
 
     // ————— PLATFORM ————— //
     g_game_state.platforms = new Entity[PLATFORM_COUNT];
-
-    for (int i = 0; i < PLATFORM_COUNT; i++)
+    
+    for (int i = 0; i < 3; i++)
     {
         g_game_state.platforms[i].m_texture_id = load_texture(PLATFORM_FILEPATH);
-        g_game_state.platforms[i].set_position(glm::vec3(i - 1.0f, -3.0f, 0.0f));
+        g_game_state.platforms[i].set_position(glm::vec3(i - 4.0f, -3.5f, 0.0f));
         g_game_state.platforms[i].update(0.0f, NULL, 0);
-    }
+        g_game_state.platforms[i].set_entity_type(PLATFORM);
 
+    }
+    for (int i = 3; i < 9; i++)
+    {
+        g_game_state.platforms[i].m_texture_id = load_texture(PLATFORM_FILEPATH);
+        g_game_state.platforms[i].set_position(glm::vec3(i - 3.0f, -3.5f, 0.0f));
+        g_game_state.platforms[i].update(0.0f, NULL, 0);
+        g_game_state.platforms[i].set_entity_type(PLATFORM);
+    }
+    
+    
+    
+    g_game_state.goal = new Entity();
+    g_game_state.goal->m_texture_id = load_texture(OTHER_FILEPATH);
+    g_game_state.goal->set_position(glm::vec3(-1.0f, -3.5f, 0.0f));
+    g_game_state.goal->update(0.0f, NULL, 0);
+    g_game_state.goal->set_entity_type(GOAL);
+    
+    g_game_state.win_msg = new Entity();
+    g_game_state.win_msg->m_texture_id = load_texture(WIN_FILEPATH);
+    g_game_state.win_msg->set_position(glm::vec3(-0.0f, 0.0f, 0.0f));
+    g_game_state.win_msg->update(0.0f, NULL, 0);
+    g_game_state.win_msg->set_scale(glm::vec3 (2.0f,1.0f,1.0f));
+    
+    
+    g_game_state.lose_msg = new Entity();
+    g_game_state.lose_msg->m_texture_id = load_texture(LOSE_FILEPATH);
+    g_game_state.lose_msg->set_position(glm::vec3(0.0f, 0.0f, 0.0f));
+    g_game_state.lose_msg->update(0.0f, NULL, 0);
+    g_game_state.lose_msg->set_scale(glm::vec3 (5.0f,1.0f,0.0f));
+    
+    
     // ————— GENERAL ————— //
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -186,11 +240,12 @@ void process_input()
                 // Quit the game with a keystroke
                 g_game_is_running = false;
                 break;
-
-            case SDLK_SPACE:
-                // Jump
-                if (g_game_state.player->m_collided_bottom) g_game_state.player->m_is_jumping = true;
+            
+            case SDLK_m:
+                start = true;
                 break;
+
+            
 
             default:
                 break;
@@ -213,6 +268,18 @@ void process_input()
         g_game_state.player->move_right();
         g_game_state.player->m_animation_indices = g_game_state.player->m_walking[g_game_state.player->RIGHT];
     }
+    else{
+        g_game_state.player->set_left_accel(false);
+        g_game_state.player->set_right_accel(false);
+    }
+    if (key_state[SDL_SCANCODE_UP])
+    {
+        g_game_state.player->move_up();
+    }
+    else{
+        g_game_state.player->gravity();
+    }
+   
 
     // This makes sure that the player can't move faster diagonally
     if (glm::length(g_game_state.player->get_movement()) > 1.0f)
@@ -227,9 +294,10 @@ void update()
     float ticks = (float)SDL_GetTicks() / MILLISECONDS_IN_SECOND; // get the current number of ticks
     float delta_time = ticks - g_previous_ticks; // the delta time is the difference from the last frame
     g_previous_ticks = ticks;
-
+    
     // ————— FIXED TIMESTEP ————— //
     // STEP 1: Keep track of how much time has passed since last step
+    
     delta_time += g_time_accumulator;
 
     // STEP 2: Accumulate the ammount of time passed while we're under our fixed timestep
@@ -238,14 +306,26 @@ void update()
         g_time_accumulator = delta_time;
         return;
     }
-
+    
+    
     // STEP 3: Once we exceed our fixed timestep, apply that elapsed time into the objects' update function invocation
     while (delta_time >= FIXED_TIMESTEP)
     {
         // Notice that we're using FIXED_TIMESTEP as our delta time
         g_game_state.player->update(FIXED_TIMESTEP, g_game_state.platforms, PLATFORM_COUNT);
+        for (int i = 0; i < PLATFORM_COUNT; i++){
+            if(g_game_state.platforms[i].collided){
+                std::cout<<"hello";
+                lose = true;
+            }
+        }
+        if(g_game_state.player->check_collision(g_game_state.goal)){
+            std::cout << "win";
+            win = true;
+        }
         delta_time -= FIXED_TIMESTEP;
     }
+    
 
     g_time_accumulator = delta_time;
 }
@@ -260,7 +340,18 @@ void render()
 
     // ————— PLATFORM ————— //
     for (int i = 0; i < PLATFORM_COUNT; i++) g_game_state.platforms[i].render(&g_shader_program);
-
+    
+    g_game_state.goal->render(&g_shader_program);
+    if(win){
+        g_game_state.win_msg->render(&g_shader_program);
+    }
+    if(lose){
+        g_game_state.lose_msg->render(&g_shader_program);
+    }
+    
+    
+    
+    
     // ————— GENERAL ————— //
     SDL_GL_SwapWindow(g_display_window);
 }
@@ -274,8 +365,11 @@ int main(int argc, char* argv[])
 
     while (g_game_is_running)
     {
-        process_input();
+        
         update();
+
+        process_input();
+        
         render();
     }
 

@@ -104,28 +104,37 @@ void Entity::update(float delta_time, Entity* collidable_entities, int collidabl
     }
 
     // ––––– GRAVITY ––––– //
-    m_velocity.x = m_movement.x * m_speed;
+    
+    
     m_velocity += m_acceleration * delta_time;
 
     m_position.y += m_velocity.y * delta_time;
     check_collision_y(collidable_entities, collidable_entity_count);
-
+    
     m_position.x += m_velocity.x * delta_time;
     check_collision_x(collidable_entities, collidable_entity_count);
-
-    // ––––– JUMPING ––––– //
-    if (m_is_jumping)
-    {
-        // STEP 1: Immediately return the flag to its original false state
-        m_is_jumping = false;
-
-        // STEP 2: The player now acquires an upward velocity
-        m_velocity.y += m_jumping_power;
+    if(!m_left_accel && !m_right_accel){
+        if(m_velocity.x >0){
+            m_acceleration.x = -0.2;
+        }
+        else if(m_velocity.x <0){
+            m_acceleration.x = 0.2;
+        }
+        else{
+            m_acceleration.x = 0;
+        }
+        
     }
-
+    
+    
+  
     // ––––– TRANSFORMATIONS ––––– //
     m_model_matrix = glm::mat4(1.0f);
     m_model_matrix = glm::translate(m_model_matrix, m_position);
+    if(this->get_entity_type() == PLATFORM){
+        std::cout << init_scale.x << std::endl;
+    }
+    m_model_matrix = glm::scale(m_model_matrix, init_scale);
 }
 
 void const Entity::check_collision_y(Entity* collidable_entities, int collidable_entity_count)
@@ -140,6 +149,7 @@ void const Entity::check_collision_y(Entity* collidable_entities, int collidable
             // STEP 2: Calculate the distance between its centre and our centre
             //         and use that to calculate the amount of overlap between
             //         both bodies.
+            collidable_entity->collided = true;
             float y_distance = fabs(m_position.y - collidable_entity->m_position.y);
             float y_overlap = fabs(y_distance - (m_height / 2.0f) - (collidable_entity->m_height / 2.0f));
 
@@ -167,6 +177,7 @@ void const Entity::check_collision_x(Entity* collidable_entities, int collidable
 
         if (check_collision(collidable_entity))
         {
+            std::cout << i << std::endl;
             float x_distance = fabs(m_position.x - collidable_entity->m_position.x);
             float x_overlap = fabs(x_distance - (m_width / 2.0f) - (collidable_entity->m_width / 2.0f));
             if (m_velocity.x > 0) {
