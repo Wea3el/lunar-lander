@@ -203,15 +203,17 @@ void initialise()
     g_game_state.win_msg = new Entity();
     g_game_state.win_msg->m_texture_id = load_texture(WIN_FILEPATH);
     g_game_state.win_msg->set_position(glm::vec3(-0.0f, 0.0f, 0.0f));
-    g_game_state.win_msg->update(0.0f, NULL, 0);
     g_game_state.win_msg->set_scale(glm::vec3 (2.0f,1.0f,1.0f));
+    g_game_state.win_msg->update(0.0f, NULL, 0);
+    
     
     
     g_game_state.lose_msg = new Entity();
     g_game_state.lose_msg->m_texture_id = load_texture(LOSE_FILEPATH);
     g_game_state.lose_msg->set_position(glm::vec3(0.0f, 0.0f, 0.0f));
-    g_game_state.lose_msg->update(0.0f, NULL, 0);
     g_game_state.lose_msg->set_scale(glm::vec3 (5.0f,1.0f,0.0f));
+    g_game_state.lose_msg->update(0.0f, NULL, 0);
+    
     
     
     // ————— GENERAL ————— //
